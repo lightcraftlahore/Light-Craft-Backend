@@ -12,7 +12,7 @@ const app = express();
 
 // 1. Precise CORS (Must be before routes)
 app.use(cors({
-    origin: 'https://light-craft-zeta.vercel.app',
+    origin: 'https://light-craft-lahore.vercel.app',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
