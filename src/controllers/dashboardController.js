@@ -56,7 +56,7 @@ const getDashboardStats = async (req, res) => {
       .limit(5); // Show top 5 critical items
 
     // 5. Get Recent Activity (Last 5 Invoices)
-    const recentInvoices = await Invoice.find()
+    const recentInvoices = await Invoice.find({ paymentStatus: { $ne: 'Draft' } })
       .sort({ createdAt: -1 })
       .limit(5)
       .populate('creator', 'name')

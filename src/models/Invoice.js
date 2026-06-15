@@ -23,9 +23,11 @@ const invoiceSchema = new mongoose.Schema({
         required: true,
       },
       name: { type: String, required: true },
+      sku: { type: String, required: true },
       quantity: { type: Number, required: true, min: 1 },
       price: { type: Number, required: true },
       subtotal: { type: Number, required: true },
+      returnedQuantity: { type: Number, default: 0 }
     }
   ],
   subTotal: {
@@ -44,7 +46,7 @@ const invoiceSchema = new mongoose.Schema({
   },
   paymentStatus: {
     type: String,
-    enum: ['Paid', 'Pending', 'Cancelled'],
+    enum: ['Paid', 'Pending', 'Cancelled', 'Draft', 'Returned', 'Partially Returned'],
     default: 'Paid',
   },
   paymentMethod: {
