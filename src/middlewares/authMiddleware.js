@@ -10,16 +10,29 @@ const protect = async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      let decoded;
+      
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+      } catch (jwtError) {
+        console.error('JWT Verification failed:', jwtError.message);
+        return res.status(401).json({ message: 'Not authorized, token failed' });
+      }
 
-      req.user = await User.findById(decoded.id).select('-password');
+      try {
+        req.user = await User.findById(decoded.id).select('-password');
+        if (!req.user) {
+          return res.status(401).json({ message: 'Not authorized, user not found' });
+        }
+      } catch (dbError) {
+        console.error('Database connection/query error in auth middleware:', dbError.message);
+        return res.status(503).json({ message: 'Service temporarily unavailable, please try again' });
+      }
 
-      // ✅ ADD 'return' to stop execution here
       return next(); 
     } catch (error) {
       console.error(error);
-      // ✅ ADD 'return' to ensure we don't accidentally send two responses
-      return res.status(401).json({ message: 'Not authorized, token failed' });
+      return res.status(500).json({ message: 'Internal Server Error' });
     }
   }
 

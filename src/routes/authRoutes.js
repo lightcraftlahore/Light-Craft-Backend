@@ -13,6 +13,17 @@ const { protect, admin } = require('../middlewares/authMiddleware');
 // Public Route
 router.post('/login', loginUser);
 
+// Public ping route (for keep-alive and prefetch warming)
+const connectDB = require('../config/db');
+router.get('/ping', async (req, res) => {
+  try {
+    await connectDB();
+    res.json({ status: 'ok', message: 'API and database are warm' });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
 // Protected Routes
 router.post('/create-user', protect, admin, createUser);
 
